@@ -55,6 +55,22 @@ works, e.g. `docker run --rm scopelines python3 find_scopeline.py 'G(a -> F b)'`
 The image is built for linux/amd64; on an ARM64 host, build it locally with
 the command above.
 
+### Viewing the rendered scopelines
+
+The container has no display, so open the rendered SVG/PNG files on the
+host, where they appear in `results/` (the figures of step 7 in
+`results/figures/`). From a terminal on the host (a second one, or after
+leaving the container):
+
+```sh
+xdg-open results/example.svg      # Linux
+open results/example.svg          # macOS
+start results\example.svg         # Windows
+```
+
+Double-clicking the file in a file manager works too, and SVG files open in
+any web browser. Without Docker, the same commands open the files directly.
+
 ## Quick check (about 1 minute)
 
 ```sh
@@ -67,7 +83,9 @@ python3 verify_oracle.py reported
 ```
 
 `find_scopeline.py` prints `(forall (a) after (sometimes (b)))`, its LTL
-translation `G(a -> Fb)`, and `equivalent: True`. The benchmark runs the first
+translation `G(a -> Fb)`, and `equivalent: True`, and draws the scopeline
+in `results/example.svg` (see [Viewing the rendered
+scopelines](#viewing-the-rendered-scopelines)). The benchmark runs the first
 4 formulas of each dataset (20 in all, 19 distinct) and prints a table like
 Table I; the oracle reports no mismatch.
 
@@ -171,6 +189,9 @@ python3 find_scopeline.py '(G a) -> (F b)' --png results/out.png --timeout 30
 python3 find_scopeline.py 'G(req -> X X ack)' --svg results/out.svg
 python3 find_scopeline.py 'G(a -> F b)' --png results/negation.png --negate
 ```
+
+In Docker, write the renderings under `results/` to open them on the host
+(see [Viewing the rendered scopelines](#viewing-the-rendered-scopelines)).
 
 Atomic propositions that start with F, G, or X followed by more letters must
 be double-quoted (e.g. `"FCT_sent"`), as spot would otherwise read them as
