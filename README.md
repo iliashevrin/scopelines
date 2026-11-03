@@ -43,12 +43,14 @@ Python packages, and this repository, so nothing else needs installing.
 docker load -i scopelines-docker.tar.gz      # the provided image, or build it:
 docker build -t scopelines .                 # (about 15-20 minutes, mostly compiling Spot)
 mkdir -p results
-docker run --rm -it --user "$(id -u):$(id -g)" -v "$PWD/results:/scopelines/results" scopelines
+docker run --rm -it -v "$PWD/results:/scopelines/results" scopelines
 ```
 
 This opens a shell in `/scopelines`, where every command below runs as is;
-the mounted `results/` keeps the outputs on the host, owned by your user
-(`--user`). A single command also
+the mounted `results/` keeps the outputs on the host. Commands run as the
+owner of `results/` (see `docker-entrypoint.sh`), so its files belong to you
+if you created it, as above. If an earlier run left files owned by root in
+it, remove them first, e.g. with `sudo rm -r results/*`. A single command also
 works, e.g. `docker run --rm scopelines python3 find_scopeline.py 'G(a -> F b)'`.
 The image is built for linux/amd64; on an ARM64 host, build it locally with
 the command above.

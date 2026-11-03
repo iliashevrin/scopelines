@@ -2,7 +2,7 @@
 # dependencies and the artifact itself.
 #
 #   docker build -t scopelines .
-#   docker run --rm -it --user "$(id -u):$(id -g)" -v "$PWD/results:/scopelines/results" scopelines
+#   docker run --rm -it -v "$PWD/results:/scopelines/results" scopelines
 
 # ---------------- Spot, built from source ----------------
 FROM ubuntu:24.04 AS spot-builder
@@ -43,12 +43,15 @@ COPY requirements.txt .
 RUN pip3 install --break-system-packages -r requirements.txt
 
 COPY . .
-# writable by any user, as the image is meant to run with --user (the host user)
-RUN mkdir -p results && chmod -R a+rwX /scopelines
+# writable by any user: commands run as the owner of the mounted results/
+# directory (see docker-entrypoint.sh), usually the host user
+RUN mkdir -p results && chmod -R a+rwX /scopelines \
+    && install -m 755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 # Fails the build if Spot, cairo, or the search does not work
 RUN python3 -c "import spot, buddy, cairosvg; print('Spot', spot.version())" \
     && python3 find_scopeline.py 'G(a -> F b)' --svg /tmp/check.svg \
     && rm -f /tmp/check.svg
 
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["/bin/bash"]
