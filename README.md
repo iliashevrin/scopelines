@@ -56,7 +56,7 @@ the command above.
 ## Quick check (about 1 minute)
 
 ```sh
-python3 find_scopeline.py 'G(a -> F b)' --svg example.svg
+python3 find_scopeline.py 'G(a -> F b)' --svg results/example.svg
 python3 run_benchmark.py --limit 4 --timeout 10
 python3 analyze_results.py
 python3 render_figures.py
@@ -165,9 +165,9 @@ whether spot confirms the two equivalent, and the search time:
 | `--no-decompose` | search without the decomposition heuristic |
 
 ```sh
-python3 find_scopeline.py '(G a) -> (F b)' --png out.png --timeout 30
-python3 find_scopeline.py 'G(req -> X X ack)' --svg out.svg
-python3 find_scopeline.py 'G(a -> F b)' --png negation.png --negate
+python3 find_scopeline.py '(G a) -> (F b)' --png results/out.png --timeout 30
+python3 find_scopeline.py 'G(req -> X X ack)' --svg results/out.svg
+python3 find_scopeline.py 'G(a -> F b)' --png results/negation.png --negate
 ```
 
 Atomic propositions that start with F, G, or X followed by more letters must
@@ -184,7 +184,7 @@ from scopelines.render.png import save_png
 result = find_scopeline("G(a -> F b)", timeout=60)       # a runner.Result
 print(result.status, result)                             # found (forall (a) after (sometimes (b)))
 print(result_ltl(result.scopelines, result.operator))    # G(a -> Fb)
-save_png(result.scopelines, "out.png", operator=result.operator)
+save_png(result.scopelines, "results/out.png", operator=result.operator)
 
 # building a scopeline by hand and translating it into LTL
 s = Scopeline(spot.formula("b"), Quantifier.EXISTS)

@@ -43,6 +43,8 @@ COPY requirements.txt .
 RUN pip3 install --break-system-packages -r requirements.txt
 
 COPY . .
+# writable by any user, as the image is meant to run with --user (the host user)
+RUN mkdir -p results && chmod -R a+rwX /scopelines
 
 # Fails the build if Spot, cairo, or the search does not work
 RUN python3 -c "import spot, buddy, cairosvg; print('Spot', spot.version())" \
