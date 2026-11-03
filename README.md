@@ -37,10 +37,14 @@ This artifact contains:
 ## Running with Docker (recommended)
 
 The Docker image contains Python 3.12, Spot 2.15.1 (built from source), the
-Python packages, and this repository, so nothing else needs installing.
+Python packages, and this repository, so nothing else needs installing. A
+ready-made image (`scopelines-docker.tar.gz`, about 350 MB) is attached to the
+[latest release](https://github.com/iliashevrin/scopelines/releases/latest);
+alternatively, build it from this repository:
 
 ```sh
-docker load -i scopelines-docker.tar.gz      # the provided image, or build it:
+curl -LO https://github.com/iliashevrin/scopelines/releases/latest/download/scopelines-docker.tar.gz
+docker load -i scopelines-docker.tar.gz      # the ready-made image, or build it:
 docker build -t scopelines .                 # (about 15-20 minutes, mostly compiling Spot)
 mkdir -p results
 docker run --rm -it -v "$PWD/results:/scopelines/results" scopelines
