@@ -1,0 +1,36 @@
+G(a -> F e)
+G(!(a & b))
+G(a -> X (X (X b)))
+e U (G (F d))
+(F b) -> (!b U (a & !b))
+G(a -> b)
+G (a && b)
+G a && G(b -> !c)
+G(a -> F b) -> G F c
+G F a -> G F b
+G F a || G F b
+F G ! a
+G (!(a && b) -> F c)
+G(!(a &&b)) && G(a || b)
+G ((a <-> b) -> (c <-> d))
+(! a) U b
+G (a -> X G ! b)
+(b U (b & ! a)) | G b
+G !(a & b)
+G (a && X b -> X X c)
+G (a -> X F b)
+a && G (a -> X ! a && X X ! a && X X X ! a && X X X X ! a && X X X X X a)
+G F a || X b
+G (a)
+G (a -> (b | X b))
+G (a | b | c)
+G (a -> F b)
+! G (! (a && X a))
+! G (! (a && X a))
+G ( a -> (X !a | XX !a | XXX !a))
+G ( a -> X b)
+F (a && b)
+F a && F b
+G (a <-> X b)
+b -> X ((c U a) || G c)
+(a U b) || G a

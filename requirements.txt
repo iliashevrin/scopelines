@@ -1,0 +1,7 @@
+# Python >= 3.10. Spot (https://spot.lre.epita.fr, tested with 2.15.1) is not
+# on PyPI: install its Python bindings from your distribution's package
+# (e.g. Debian/Ubuntu: python3-spot from the Spot APT repository), conda
+# (conda install -c conda-forge spot), or a source build.
+cairosvg>=2.7
+matplotlib>=3.7
+scipy>=1.10
