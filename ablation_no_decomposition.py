@@ -28,7 +28,8 @@ def rerun(task):
 
 def main():
 	parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-	parser.add_argument("results", nargs="?", type=Path, default=Path(__file__).resolve().parent / "results")
+	parser.add_argument("results", nargs="?", type=Path, default=Path(__file__).resolve().parent / "results",
+		help="the output directory of run_benchmark.py (default: results/)")
 	parser.add_argument("--timeout", type=float, default=60, help="search time budget per formula (default: 60)")
 	parser.add_argument("--procs", type=int, default=max(1, (os.cpu_count() or 2) // 2),
 		help="formulas searched in parallel (default: half the cores)")

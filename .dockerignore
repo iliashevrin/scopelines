@@ -1,0 +1,8 @@
+.git
+.gitignore
+results/
+**/__pycache__/
+*.png
+*.svg
+Dockerfile
+.dockerignore

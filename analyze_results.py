@@ -139,7 +139,8 @@ def figure7(found, notfound, path):
 
 def main():
 	parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-	parser.add_argument("results", nargs="?", type=Path, default=Path(__file__).resolve().parent / "results")
+	parser.add_argument("results", nargs="?", type=Path, default=Path(__file__).resolve().parent / "results",
+		help="the output directory of run_benchmark.py (default: results/)")
 	args = parser.parse_args()
 	rows, distinct = load(args.results)
 	found = [r for r in distinct if r["found"]]

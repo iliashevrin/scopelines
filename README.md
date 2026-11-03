@@ -27,16 +27,35 @@ This artifact contains:
   and the packages in `requirements.txt` (cairosvg, matplotlib, scipy).
   Spot is not on PyPI; see the Docker image below, or install its Python
   bindings from your distribution's packages, conda
-  (`conda install -c conda-forge spot`), or a source build.
+  (`conda install -c conda-forge spot`), or a source build, and then run
+  `pip install -r requirements.txt`.
 - Linux (or macOS); the time budgets rely on `fork`.
 - Any x86-64 or ARM64 machine with 4 cores and 8 GB of RAM. The paper's
   numbers come from an Intel Core i5-10210U laptop (4 cores/8 threads at
   1.60 GHz, 16 GB of RAM).
 
-## Quick check (about 5 minutes)
+## Running with Docker (recommended)
+
+The Docker image contains Python 3.12, Spot 2.15.1 (built from source), the
+Python packages, and this repository, so nothing else needs installing.
 
 ```sh
-pip install -r requirements.txt          # if not using Docker
+docker load -i scopelines-docker.tar.gz      # the provided image, or build it:
+docker build -t scopelines .                 # (about 15-20 minutes, mostly compiling Spot)
+mkdir -p results
+docker run --rm -it --user "$(id -u):$(id -g)" -v "$PWD/results:/scopelines/results" scopelines
+```
+
+This opens a shell in `/scopelines`, where every command below runs as is;
+the mounted `results/` keeps the outputs on the host, owned by your user
+(`--user`). A single command also
+works, e.g. `docker run --rm scopelines python3 find_scopeline.py 'G(a -> F b)'`.
+The image is built for linux/amd64; on an ARM64 host, build it locally with
+the command above.
+
+## Quick check (about 1 minute)
+
+```sh
 python3 find_scopeline.py 'G(a -> F b)' --svg example.svg
 python3 run_benchmark.py --limit 4 --timeout 10
 python3 analyze_results.py
@@ -54,15 +73,15 @@ Table I; the oracle reports no mismatch.
 
 All outputs go to `results/`. Steps 2, 3, and 5 read the results of step 1; the others are independent. The runtimes are on the laptop above, about 1.5 hours in all.
 
-| Step | Command | Time | Paper |
-|---|---|---|---|
-| 1. Search all formulas | `python3 run_benchmark.py` | ~50 min | Section VII |
-| 2. Derive the results | `python3 analyze_results.py` | ~5 s | Table I, Section VII-B, Figure 7 |
-| 3. Decomposition ablation | `python3 ablation_no_decomposition.py` | ~15 min | Section VII-B |
-| 4. Oracle, random scopelines | `python3 verify_oracle.py random` | ~17 min (8 threads) | Section VII-A |
-| 5. Oracle, reported scopelines | `python3 verify_oracle.py reported` | ~15 s | Section VII-A |
-| 6. Fault injection | `python3 oracle_mutations.py` | ~6 min | Section VII-A |
-| 7. Example figures | `python3 render_figures.py` | ~10 s | Figures 1, 3-6 |
+| Step | Command | Options (defaults) | Time | Paper |
+|---|---|---|---|---|
+| 1. Search all formulas | `python3 run_benchmark.py` | `--timeout` seconds per formula (60); `--limit N`, only the first N formulas of each dataset (all); `--out` directory (`results/`) | ~50 min | Section VII |
+| 2. Derive the results | `python3 analyze_results.py` | results directory (`results/`) | ~5 s | Table I, Section VII-B, Figure 7 |
+| 3. Decomposition ablation | `python3 ablation_no_decomposition.py` | results directory (`results/`); `--timeout` seconds per formula (60); `--procs`, formulas in parallel (half the cores) | ~15 min | Section VII-B |
+| 4. Oracle, random scopelines | `python3 verify_oracle.py random` | `--count` scopelines (10000); `--max-nodes` (5); `--seed` (1); `--procs` (all cores) | ~17 min (8 threads) | Section VII-A |
+| 5. Oracle, reported scopelines | `python3 verify_oracle.py reported` | a `detail.csv` (`results/detail.csv`); `--lassos` per scopeline (1000); `--seed` (1); `--procs` (all cores) | ~15 s | Section VII-A |
+| 6. Fault injection | `python3 oracle_mutations.py` | number of random scopelines (300); a filter on the fault names (none) | ~6 min | Section VII-A |
+| 7. Example figures | `python3 render_figures.py` | output directory (`results/figures`) | ~10 s | Figures 1, 3-6 |
 
 **Step 1** searches every formula of `datasets/` for a scopeline, with a
 budget of 60 seconds each, renders each result as PNG (timed, then
@@ -132,7 +151,18 @@ every fault).
 
 ## Using scopelines beyond the paper
 
-From the command line, for any LTL formula in spot's syntax:
+From the command line, for any LTL formula in spot's syntax,
+`find_scopeline.py` prints the scopeline found, its translation into LTL,
+whether spot confirms the two equivalent, and the search time:
+
+| Parameter | Meaning (default) |
+|---|---|
+| `formula` | the LTL formula, in spot's syntax |
+| `--timeout SECONDS` | the search's time budget (60) |
+| `--svg FILE` | write the rendering as SVG |
+| `--png FILE` | write the rendering as PNG |
+| `--negate` | render the negation of the scopeline instead |
+| `--no-decompose` | search without the decomposition heuristic |
 
 ```sh
 python3 find_scopeline.py '(G a) -> (F b)' --png out.png --timeout 30
