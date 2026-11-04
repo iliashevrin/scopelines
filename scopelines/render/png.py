@@ -10,6 +10,7 @@ custom properties. The canvas width follows the diagram's content.
 """
 
 import re
+from pathlib import Path
 
 import cairosvg
 
@@ -134,6 +135,7 @@ def save_svg(scopelines, out_path, operator="", negate=False):
 	SVG; with negate, renders its negation instead."""
 
 	svg = render_bare_svg(scopelines, operator=operator, negate=negate)
+	Path(out_path).parent.mkdir(parents=True, exist_ok=True)
 	with open(out_path, "w", encoding="utf-8") as f:
 		f.write(svg)
 	return out_path
@@ -144,5 +146,6 @@ def save_png(scopelines, out_path, operator="", negate=False, scale=2):
 	the pixel density."""
 
 	svg = render_bare_svg(scopelines, operator=operator, negate=negate)
+	Path(out_path).parent.mkdir(parents=True, exist_ok=True)
 	cairosvg.svg2png(bytestring=svg.encode("utf-8"), write_to=str(out_path), scale=scale)
 	return out_path
